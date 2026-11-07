@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Hollow Knight color palette ────────────────────────────── */
+  --color-hk-void:    #050508;
+  --color-hk-chitin:  #0d0d10;
+  --color-hk-stone:   #1a1820;
+  --color-hk-ancient: #2a2830;
+  --color-hk-pale:    #e8e4df;
+  --color-hk-dim:     #6a6865;
+  --color-hk-soul:    #b8ccff;
+  --color-hk-amber:   #c8a857;
+  --color-hk-fog:     #9ab0c8;
+
+  /* Legacy aliases so existing Tailwind classes still resolve */
+  --color-dark-bg:      #050508;
+  --color-dark-surface: #0d0d10;
+  --color-dark-card:    #1a1820;
+
+  /* ── Fonts ─────────────────────────────────────────────────── */
+  --font-sans:    var(--font-cinzel);
+  --font-display: var(--font-cinzel-decorative);
+  --font-mono:    var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #050508;
+  --foreground: #e8e4df;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+/* ─── Glassmorphism (HK stone glass) ─────────────────────────── */
+.glass {
+  background: rgba(13, 13, 16, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(200, 168, 87, 0.22);
+}
+
+/* ─── Soul glow text (replaces .neon-text) ───────────────────── */
+.soul-text {
+  text-shadow:
+    0 0 8px rgba(184, 204, 255, 0.7),
+    0 0 16px rgba(184, 204, 255, 0.4),
+    0 0 32px rgba(184, 204, 255, 0.2);
+}
+
+/* ─── Amber glow text ────────────────────────────────────────── */
+.amber-text {
+  text-shadow:
+    0 0 8px rgba(200, 168, 87, 0.8),
+    0 0 20px rgba(200, 168, 87, 0.4);
+}
+
+/* ─── Progress bar glow (HK amber) ──────────────────────────── */
+.amber-bar {
+  box-shadow: 0 0 8px rgba(200, 168, 87, 0.6), 0 0 16px rgba(200, 168, 87, 0.3);
+}
+
+/* ─── HK corner rune decorations ─────────────────────────────── */
+.hk-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0.45;
+}
+.hk-corner-tl { top: 16px; left: 16px; border-top: 1px solid #c8a857; border-left: 1px solid #c8a857; }
+.hk-corner-tr { top: 16px; right: 16px; border-top: 1px solid #c8a857; border-right: 1px solid #c8a857; }
+.hk-corner-bl { bottom: 16px; left: 16px; border-bottom: 1px solid #c8a857; border-left: 1px solid #c8a857; }
+.hk-corner-br { bottom: 16px; right: 16px; border-bottom: 1px solid #c8a857; border-right: 1px solid #c8a857; }
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(200, 168, 87, 0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(200, 168, 87, 0.45); }
+
+/* ─── Door Transition (stone panels, amber glow) ─────────────── */
+.door-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #1a1820;
+  z-index: 60;
+}
+
+.door-panel-top {
+  top: 0;
+  height: 50%;
+  border-bottom: 2px solid #c8a857;
+  box-shadow: 0 4px 30px rgba(200, 168, 87, 0.5), 0 0 60px rgba(200, 168, 87, 0.15);
+}
+
+.door-panel-bottom {
+  bottom: 0;
+  height: 50%;
+  border-top: 2px solid #c8a857;
+  box-shadow: 0 -4px 30px rgba(200, 168, 87, 0.5), 0 0 60px rgba(200, 168, 87, 0.15);
+}
+
+/* ─── Soul vessel (loading screen pulse) ─────────────────────── */
+.soul-vessel {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(232, 228, 223, 0.92);
+  animation: soul-pulse 2.4s ease-in-out infinite;
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+
+@keyframes soul-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    box-shadow: 0 0 12px 4px rgba(184, 204, 255, 0.4), 0 0 30px 8px rgba(184, 204, 255, 0.15);
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px 8px rgba(184, 204, 255, 0.7), 0 0 50px 16px rgba(184, 204, 255, 0.25);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes wisp-drift {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  8%   { opacity: 0.65; }
+  85%  { opacity: 0.3; }
+  100% { transform: translateY(-90px) scale(0.4); opacity: 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 0.8; }
+}
+
+@keyframes hk-flicker {
+  0%, 100% { opacity: 1; }
+  92%       { opacity: 1; }
+  93%       { opacity: 0.7; }
+  94%       { opacity: 1; }
+  96%       { opacity: 0.85; }
+  97%       { opacity: 1; }
+}
+
+@keyframes hk-scan {
+  0%   { left: -12%; }
+  100% { left: 108%; }
 }
